@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:xd/models/expedientesmodel.dart';
 import 'package:xd/inicio.dart';
 
 // Assuming you have a login model class (loginmodel.dart)
@@ -16,11 +16,9 @@ class LoginModel {
   Map<String, dynamic> toJson() => {'email': email, 'password': password};
 }
 
-void main() => runApp(LoginApp());
+void main() => runApp(MyApp());
 
-class LoginApp extends StatelessWidget {
-  const LoginApp({Key? key}) : super(key: key);
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,50 +29,55 @@ class LoginApp extends StatelessWidget {
 }
 
 class LoginInicio extends StatefulWidget {
-  const LoginInicio({Key? key}) : super(key: key);
-
   @override
   _LoginInicioState createState() => _LoginInicioState();
 }
 
 class _LoginInicioState extends State<LoginInicio> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String? _userId;
 
   Future<void> _loginUser() async {
     if (_formKey.currentState!.validate()) {
       // Get email and password from controllers
-      String email = _emailController.text;
-      String password = _passwordController.text;
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
 
       // Create a LoginModel object with user input
-      LoginModel loginModel = LoginModel(email: email, password: password);
+      final LoginModel loginModel =
+          LoginModel(email: email, password: password);
 
       // Encode login model to JSON for sending in the request body
-      String jsonData = jsonEncode(loginModel.toJson());
+      final String jsonData = jsonEncode(loginModel.toJson());
 
       try {
         // Replace 'http://100.64.196.59:3000/' with your actual API endpoint
         final response = await http.post(
-          Uri.parse('http://100.68.51.19:3000/auth/login'),
-          
+          Uri.parse('http://100.64.196.59:3000/auth/loginPacientes'),
           headers: {'Content-Type': 'application/json'},
           body: jsonData,
         );
-        
 
         if (response.statusCode == 200) {
-          // Handle successful login (navigate to another screen, etc.)
+          // Handle successful login
           print('Login successful!');
-          
-           Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => pagInicio()),
-    );
-        }
-         else {
-          // Handle failed login (show error message)
+
+          // Parse the response body to extract the ID (assuming it's in JSON format)
+          final responseData = jsonDecode(response.body);
+          _userId = responseData[
+              'id']; // Replace 'id' with the actual key in your response
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ExpedienteView(expedientes, userId: _userId)),
+          );
+        } else {
+          // Handle failed login
           print('Login failed: ${response.statusCode}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -91,11 +94,6 @@ class _LoginInicioState extends State<LoginInicio> {
         );
       }
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override

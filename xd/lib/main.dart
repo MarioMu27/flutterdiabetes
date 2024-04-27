@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xd/login.dart';
-
+import 'package:xd/login.dart'; // Assuming login.dart contains LoginApp
 
 void main() => runApp(Diabetes());
 
@@ -32,21 +31,29 @@ class _InicioState extends State<Inicio> {
   }
 }
 
-Widget inter(BuildContext context) { // Añade el parámetro context
+Widget inter(BuildContext context) {
   return Container(
     decoration: BoxDecoration(
       image: DecorationImage(
-        image: NetworkImage("https://st2.depositphotos.com/36924814/46071/i/450/depositphotos_460713580-stock-photo-medical-health-blue-cross-neon.jpg"),
+        image: NetworkImage(
+          "https://img.freepik.com/vector-premium/patron-medico-fisuras_71374-182.jpg"
+        ),
         fit: BoxFit.cover,
       ),
     ),
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          bienvenida(),
-          initSesion(context), // Llama a la función initSesion() pasando el contexto
-        ],
+    child: Center( // Center the entire content
+      child: SingleChildScrollView( // Allow for scrolling if content overflows
+        child: Padding( // Add padding around the content
+          padding: EdgeInsets.all(20.0),
+          child: Column(  // Use Column for vertical layout
+            mainAxisAlignment: MainAxisAlignment.center, // Center the column
+            children: [
+              bienvenida(),
+              SizedBox(height: 20.0), // Add some space between elements
+              initSesion(context),
+            ],
+          ),
+        ),
       ),
     ),
   );
@@ -57,14 +64,14 @@ Widget bienvenida() {
     "Bienvenido",
     textAlign: TextAlign.center,
     style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.bold,
-        ),
+      color: Colors.black,
+      fontSize: 30.0,
+      fontWeight: FontWeight.bold,
+    ),
   );
 }
 
-Widget initSesion(BuildContext context) { // Añade el parámetro context
+Widget initSesion(BuildContext context) {
   return ElevatedButton(
     onPressed: () {
       Navigator.push(
@@ -73,7 +80,7 @@ Widget initSesion(BuildContext context) { // Añade el parámetro context
       );
     },
     child: Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.min,  // Adjust width as needed
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
